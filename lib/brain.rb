@@ -3,6 +3,7 @@ require 'yaml'
 
 module Neural
   class Brain
+
     def self.load(path)
       YAML.load(File.read(path))
     end

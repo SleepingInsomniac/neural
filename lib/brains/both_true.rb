@@ -1,7 +1,7 @@
 require 'brain'
 
 class BothTrue < Neural::Brain
-  BRAIN_FILE = File.join(__dir__, 'brain.yml')
+  BRAIN_FILE = File.join(__dir__, "#{self.name}.yml")
 
   def self.load
     if File.exists?(BRAIN_FILE)

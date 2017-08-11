@@ -10,16 +10,16 @@ inputs:
                 *1: true
                 ? &3 !ruby/object:Neural::Connection
                   dest: *2
-                  weight: 0.6590627251733386
-                  value: -0.6589810641920251
+                  weight: 0.6591313378285277
+                  value: -0.6590960226365835
                 : true
             outputs: !ruby/object:Set
               hash: {}
-            activated_connections: 1
-            value: 0.2111328714201674
+            activated_connections: 0
+            value: 0.4999916626803803
             learning_rate: 0.001
-          weight: 0.6590960128914974
-          value: -0.6590960128914974
+          weight: 0.6589757502234619
+          value: 0.6590626733581016
         : true
   :two: !ruby/object:Neural::Input
     outputs: !ruby/object:Set
@@ -27,4 +27,4 @@ inputs:
         *3: true
 neurons:
   :n: *2
-path: "/Users/alex/Library/Mobile Documents/com~apple~CloudDocs/Software/neural/lib/brains/brain.yml"
+path: "/Users/alex/Library/Mobile Documents/com~apple~CloudDocs/Software/neural/lib/brains/BothTrue.yml"
