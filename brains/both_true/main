@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+require_relative '../../setup'
+require 'brains/both_true'
+
+brain = BothTrue.load
+
+puts "Are inputs both 1?"
+(ARGV[0] || 1).to_i.times do
+  r1 = [-1, 1].sample
+  r2 = [-1, 1].sample
+
+  brain.perceive(one: r1, two: r2)
+  guess = brain.both_true?
+  # certainty = brain.neurons[:n].value
+
+  if r1 + r2 == 2 && guess
+    puts "Correct!: [#{r1}, #{r2}] are both true"
+  elsif r1 + r2 == 2 && !guess
+    puts "Wrong!: [#{r1}, #{r2}] are both true"
+  else
+    puts "Correct!: [#{r1}, #{r2}] are not both true"
+  end
+end

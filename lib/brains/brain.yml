@@ -1,0 +1,30 @@
+--- !ruby/object:BothTrue
+inputs:
+  :one: !ruby/object:Neural::Input
+    outputs: !ruby/object:Set
+      hash:
+        ? &1 !ruby/object:Neural::Connection
+          dest: &2 !ruby/object:Neural::Neuron
+            inputs: !ruby/object:Set
+              hash:
+                *1: true
+                ? &3 !ruby/object:Neural::Connection
+                  dest: *2
+                  weight: 0.6590627251733386
+                  value: -0.6589810641920251
+                : true
+            outputs: !ruby/object:Set
+              hash: {}
+            activated_connections: 1
+            value: 0.2111328714201674
+            learning_rate: 0.001
+          weight: 0.6590960128914974
+          value: -0.6590960128914974
+        : true
+  :two: !ruby/object:Neural::Input
+    outputs: !ruby/object:Set
+      hash:
+        *3: true
+neurons:
+  :n: *2
+path: "/Users/alex/Library/Mobile Documents/com~apple~CloudDocs/Software/neural/lib/brains/brain.yml"
