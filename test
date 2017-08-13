@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+LIB_DIR = File.join(__dir__, 'lib')
+$LOAD_PATH.unshift(LIB_DIR) unless $LOAD_PATH.include? LIB_DIR
+
+require 'brain'
+
+n = Neural::Neuron.new
+x = Neural::Input.new(n)
+y = Neural::Input.new(n)
+
+brain = Neural::Brain.new( 
+  inputs: { x: x, y: y },
+  neurons: { n: n }
+)
+
+def line(x)
+  y = 2 * x + 3
+end
+
+def above?(x,y)
+  y > line(x)
+end
+
+100.times do
+  x = rand(-25..25)
+  y = rand(-25..25)
+  puts "[#{x}, #{y}]"
+  known = above?(x,y)
+  brain.perceive(x: x, y: y)
+  puts "[above] Correct" if  known && brain.neurons[:n].value > 0.5
+  puts "[below] Correct" if !known && brain.neurons[:n].value < 0.5
+  puts "[above] Wrong"   if !known && brain.neurons[:n].value > 0.5
+  puts "[below] Wrong"   if  known && brain.neurons[:n].value < 0.5
+  puts brain.neurons[:n]
+  brain.neurons[:n].learn(known ? 1 : 0)
+end

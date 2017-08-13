@@ -1,5 +1,6 @@
 require 'sigmoid'
 require 'set'
+require 'yaml'
 
 module Neural
 
@@ -16,7 +17,6 @@ module Neural
     end
 
     def value=(number)
-      # puts "\n#{self}: set #{number}"
       @outputs.each { |c| c.value = number.to_f }
     end
   end
@@ -25,18 +25,17 @@ module Neural
 
   class Connection
     attr_accessor :weight
-    attr_reader :value
+    attr_reader :value, :input
 
     def initialize(dest, weight: rand(-1.0..1.0))
       @dest = dest
       @weight = weight
-      @dest.inputs << self
-      # puts "Connection made: #{@weight}"
+      @dest.add_input(self)
     end
 
     def value=(number)
-      @value = number.to_f * @weight
-      # puts "Input set: #{number} (#{@value})"
+      @input = number
+      @value = (number.to_f * @weight)
       @dest.stimulate
     end
   end
@@ -47,12 +46,25 @@ module Neural
     attr_accessor :inputs, :outputs
     attr_reader :value, :prev_error
 
-    def initialize(learning_rate: 0.001)
+    def initialize(learning_rate: 0.001, bias: 1)
       @inputs = Set.new
       @outputs = Set.new
       @activated_connections = 0
       @value = 0.0
       @learning_rate = learning_rate
+      @bias = Connection.new(self)
+      @bias.value = bias
+    end
+
+    def to_s
+      {
+        inputs: @inputs.map{|i| "#{i.input} : #{i.value} : #{i.weight}"},
+        value: "#{value}"
+      }.to_yaml
+    end
+
+    def add_input(source)
+      @inputs << source
     end
 
     def connect(neuron, weight: rand(-1.0..1.0))
@@ -62,24 +74,20 @@ module Neural
     end
 
     def stimulate
-      activate and feed_forward if (@activated_connections += 1) >= @inputs.count
+      activate and feed_forward if (@activated_connections += 1) >= @inputs.count - 1
     end
 
     def learn(desired)
       error = desired.to_f - @value
-      # print "\r#{"%.4f" % error}".rjust(12)
-      # puts "Desired: #{desired}, error: #{error}"
-      @inputs.each do |input|
-        adjustment = @learning_rate * (error * input.value)
-        # puts "\rAdjust: #{"%.3f" % input.weight} + #{"%.3f" % adjustment} = #{"%.3f" % (input.weight + adjustment)}"
-        input.weight = squash(input.weight + adjustment)
-      end
-      return error
+      puts "Error: #{error}"
+      @inputs.each { |input| input.weight += error * @learning_rate * input.input }
     end
 
     def activate
       @activated_connections = 0
       @value = squash(@inputs.reduce(0.0) { |sum, input| sum += input.value })
+      puts "Activated: #{@value}"
+      return @value
     end
 
     def feed_forward
