@@ -79,14 +79,13 @@ module Neural
 
     def learn(desired)
       error = desired.to_f - @value
-      puts "Error: #{error}"
       @inputs.each { |input| input.weight += error * @learning_rate * input.input }
+      return error
     end
 
     def activate
       @activated_connections = 0
       @value = squash(@inputs.reduce(0.0) { |sum, input| sum += input.value })
-      puts "Activated: #{@value}"
       return @value
     end
 

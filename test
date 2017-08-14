@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(LIB_DIR) unless $LOAD_PATH.include? LIB_DIR
 
 require 'brain'
 
-n = Neural::Neuron.new
+n = Neural::Neuron.new(learning_rate: 0.001)
 x = Neural::Input.new(n)
 y = Neural::Input.new(n)
 
@@ -21,16 +21,39 @@ def above?(x,y)
   y > line(x)
 end
 
-100.times do
+class Average < Array
+  def <<(value)
+    shift if count > 50
+    super(value)
+  end
+
+  def average
+    reduce(&:+) / count
+  end
+end
+
+a = Average.new
+
+iteration = 0
+record = 0
+loop do
+  iteration += 1
   x = rand(-25..25)
   y = rand(-25..25)
-  puts "[#{x}, #{y}]"
-  known = above?(x,y)
+  is_above = above?(x,y)
   brain.perceive(x: x, y: y)
-  puts "[above] Correct" if  known && brain.neurons[:n].value > 0.5
-  puts "[below] Correct" if !known && brain.neurons[:n].value < 0.5
-  puts "[above] Wrong"   if !known && brain.neurons[:n].value > 0.5
-  puts "[below] Wrong"   if  known && brain.neurons[:n].value < 0.5
-  puts brain.neurons[:n]
-  brain.neurons[:n].learn(known ? 1 : 0)
+  guess = brain.neurons[:n].value > 0.5
+  correct = is_above && guess || !is_above && !guess
+  record += 1 if correct
+  error = brain.neurons[:n].learn(is_above ? 1 : 0)
+
+  print "\r[#{x}, #{y}]".ljust 15
+  print " "
+  print "(#{((record.to_f / iteration) * 100).to_i}%)".ljust 6
+  print is_above ? '[above]' : '[below]'
+  print ' '
+  print guess ? '[above]' : '[below]'
+  print ' '
+  print correct ? 'Correct' : 'Wrong'
+  print '               '
 end
